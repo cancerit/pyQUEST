@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyquest"
+dynamic = ["version"]
+requires-python = ">=3.11"
+dependencies = [
+    'click',
+    'click-option-group',
+    'numpy',
+    'pysam',
+    'python-magic'
+]
