@@ -164,7 +164,7 @@ The headers are ignored, and therefore the relevant fields are identified by the
 
 ```
 ##Command: pyquest -o output --min-length 0 --low-count 2 -l guides.tsv --sample XYZ --no-compression test.queries.bam
-##Version: 0.4.0
+##Version: 1.0.0
 #SEQUENCE	LENGTH	COUNT
 AAAAAAGCTTGCATTAGAC	19	25
 AAAAAATATCGTGTCAAGT	19	26
@@ -192,7 +192,7 @@ AAAAACGTATTTAGCCGAA	19	23
 
 ```
 ##Command: pyquest -o output --min-length 0 --low-count 2 -l guides.tsv --sample XYZ --no-compression test.queries.bam
-##Version: 0.4.0
+##Version: 1.0.0
 #ID	NAME	SEQUENCE	COUNT	UNIQUE	SAMPLE
 1	some-name-1	AAAAAAAAATCCAGAACCT	0	1	XYZ
 2	some-name-2	AAAAAAATATGCCCGTGGA	0	1	XYZ
@@ -221,7 +221,7 @@ AAAAACGTATTTAGCCGAA	19	23
 
 ```json
 {
-    "version": "0.4.0",
+    "version": "1.0.0",
     "command": "pyquest -o output --min-length 0 --low-count 2 -l guides.tsv --sample XYZ --no-compression test.queries.bam",
     "sample_name": "XYZ",
     "total_reads": 1020769,
@@ -260,7 +260,7 @@ All statistics are computed on the read counts of unique targets, excluding thos
 
 ```json
 {
-    "version": "0.4.0",
+    "version": "1.0.0",
     "command": "pyquest -o output --min-length 3 --low-count 2 -l guides.tsv --sample XYZ --no-compression test.queries.sam",
     "sample_name": "XYZ",
     "input_reads": 1020770,
