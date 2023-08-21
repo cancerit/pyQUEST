@@ -185,6 +185,7 @@ class TargetLibrary:
             masked_reads=stats.masked_reads,
             total_invalid_reads=stats.total_invalid_reads,
             total_excluded_reads=stats.total_excluded_reads,
+            total_zero_reads=stats.total_zero_reads,
 
             mapped_to_template_reads=mapped_to_template_reads,
             multimap_reads=multimap_reads,

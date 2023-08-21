@@ -32,7 +32,7 @@ from .counting import run_library_independent_counting
 from .errors import CustomException, InvalidInputFormatError, InvalidLibraryError, UnsupportedData
 from .library import TargetLibrary
 from .readers.read_file_info import ReadFileFormat, ReadFileInfo
-from .writer import write_stats, write_unique_counts
+from .writer import write_stats, write_unique_counts, write_most_common_reads
 
 
 LOG_LEVELS = [
@@ -43,6 +43,7 @@ LOG_LEVELS = [
 
 HELP_LIBRARY = "Expanded library definition TSV file with optional headers (common format for single/dual/other)"
 HELP_MIN_LENGTH = "Minimum read length"
+HELP_MOST_COMMON = "Output top X most common unique read sequences in FASTA format"
 HELP_SAMPLE = "Sample name to apply to count column, required for fastq, interrogate header for others when not defined."
 HELP_OUTPUT = "Final output to this filename prefix"
 HELP_LOW_COUNT = "*.stats.json includes low_count_guides_lt_{15,30}, this option allow specification of an additional cut-off."
@@ -98,7 +99,8 @@ debug_opts = OptionGroup("\nDebug", help="Options specific to troubleshooting, t
     type=click.Path(exists=False, file_okay=True, resolve_path=True),
     help=HELP_OUTPUT
 )
-@click.option('--min-length', type=click.IntRange(min=0), default=0, help=HELP_MIN_LENGTH, show_default=True)
+@click.option('--min-length', type=click.IntRange(min=1), default=1, help=HELP_MIN_LENGTH, show_default=True)
+@click.option('--most-common', type=click.IntRange(min=1, max=50), default=None, help=HELP_MOST_COMMON, show_default=True)
 @sample_opts.option('-s', '--sample', type=str, help=HELP_SAMPLE)
 @sample_opts.option('-r', '--reference', type=existing_file_path, help=HELP_REFERENCE)
 @lib_dep_opts.option('-l', '--library', default=None, type=existing_file_path, help=HELP_LIBRARY)
@@ -123,6 +125,7 @@ def main(
     sample: str | None,
     output: str,
     low_count: int | None,
+    most_common: int | None,
     min_length: int,
     reference: str | None,
     queries: str,
@@ -176,6 +179,14 @@ def main(
     # Write unique counts to file
     logging.info("Writing library-independent counts...")
     write_unique_counts(query_counts, app_info, output, compress=not no_compression)
+
+    # Write X most common unique reads to file if specified
+    if most_common is not None:
+        write_most_common_reads(most_common, sample, query_counts, output, compress=not no_compression)
+
+    # Warn user with number of 0-length reads
+    if stats.total_zero_reads > 0:
+        logging.warning(f"{stats.total_zero_reads} zero-length reads")
 
     if library:
 

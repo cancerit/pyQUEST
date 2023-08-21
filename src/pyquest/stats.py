@@ -43,6 +43,7 @@ class LibraryIndependentStats:
     masked_reads: int
     total_invalid_reads: int
     total_excluded_reads: int
+    total_zero_reads: int
 
     @classmethod
     def empty(cls, sample_name: str):
@@ -59,6 +60,8 @@ class LibraryIndependentStats:
             self.total_invalid_reads += 1
         if read_info.is_short:
             self.length_excluded_reads += 1
+        if read_info.is_empty:
+            self.total_zero_reads += 1
 
         self.input_reads += 1
         keep: bool = not read_info.to_discard(discard_qc)
@@ -78,7 +81,8 @@ class LibraryIndependentStats:
             'vendor_failed_reads': self.vendor_failed_reads,
             'length_excluded_reads': self.length_excluded_reads,
             'ambiguous_nt_reads': self.ambiguous_nt_reads,
-            'masked_reads': self.masked_reads
+            'masked_reads': self.masked_reads,
+            'zero_length_reads': self.total_zero_reads,
         }
 
 
