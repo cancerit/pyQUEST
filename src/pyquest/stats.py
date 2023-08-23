@@ -47,7 +47,7 @@ class LibraryIndependentStats:
 
     @classmethod
     def empty(cls, sample_name: str):
-        return cls(sample_name, 0, 0, 0, 0, 0, 0, 0, 0)
+        return cls(sample_name, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     def eval_read_info(self, discard_qc: bool, read_info: ReadInfo) -> bool:
         if read_info.is_qc_fail:
