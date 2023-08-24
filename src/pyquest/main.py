@@ -186,7 +186,7 @@ def main(
 
     # Warn user with number of 0-length reads
     if stats.total_zero_reads > 0:
-        logging.warning(f"{stats.total_zero_reads} zero-length reads")
+        logging.warning(f"{stats.total_zero_reads} zero-length reads were found")
 
     if library:
 

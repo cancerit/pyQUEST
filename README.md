@@ -51,7 +51,9 @@ Usage: pyquest [OPTIONS] QUERIES
 Options:
   -o, --output PATH               Final output to this filename prefix
                                   [required]
-  --min-length INTEGER RANGE      Minimum read length  [default: 0; x>=0]
+  --min-length INTEGER RANGE      Minimum read length  [default: 1; x>=1]
+  --most-common INTEGER RANGE     Output top X most common unique read
+                                  sequences in FASTA format  [1<=x<=50]
 
 Input sample metadata:         Options adding information to the input
     -s, --sample TEXT             Sample name to apply to count column,
@@ -216,6 +218,7 @@ AAAAACGTATTTAGCCGAA	19	23
 |`length_excluded_reads`|integer|Total reads discarded because shorter than a user-defined threshold|
 |`ambiguous_nt_reads`|integer|Total reads with ambiguous nucleotides|
 |`masked_reads`|integer|Total soft-masked reads|
+|`zero_length_reads`|integer|Total zero-length reads|
 
 *E.g.*:
 

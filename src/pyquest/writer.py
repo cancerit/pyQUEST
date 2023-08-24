@@ -85,7 +85,6 @@ def write_most_common_reads(n: int, sample: str | None, counts: Counter[str], ou
 
     with open_output(fp, compress=compress) as fh:
         for i, (read, count) in enumerate(counts.most_common(n)): 
-            # TODO - check iterating thru Counter(dict) like this - need to get read (key) and count (value)
             # TODO - check with n greater than number of reads?
-            fh.write(f">pyQUEST|{i}|{count}")
-            fh.write(read)
+            fh.write(f">pyQUEST|{i+1}|{count}\n")
+            fh.write(f"{read}\n")
