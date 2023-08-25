@@ -85,6 +85,6 @@ def write_most_common_reads(n: int, sample: str | None, counts: Counter[str], ou
 
     with open_output(fp, compress=compress) as fh:
         for i, (read, count) in enumerate(counts.most_common(n)): 
-            # TODO - check with n greater than number of reads?
-            fh.write(f">pyQUEST|{i+1}|{count}\n")
+            # if n is greater than the number of reads it will silently write all reads
+            fh.write(f"> pyQUEST|{i+1}|{count}\n")
             fh.write(f"{read}\n")

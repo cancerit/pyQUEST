@@ -107,7 +107,7 @@ def get_hts_read_info(min_length: int, skip_read_flag: int, read: pysam.AlignedS
             'S' in read.cigarstring
         ),
         is_short=(len(seq) < min_length),
-        is_empty=False) # HTS reads can't be empty? not sure here
+        is_empty=False)
 
 
 def parse_htsfile(

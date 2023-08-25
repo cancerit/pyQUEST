@@ -29,7 +29,7 @@ from click_option_group import OptionGroup
 from . import __version__
 from .app_info import AppInfo
 from .counting import run_library_independent_counting
-from .errors import CustomException, InvalidInputFormatError, InvalidLibraryError, UnsupportedData
+from .errors import CustomException, InvalidInputFormatError, InvalidLibraryError, MissingMetadataError, UnsupportedData
 from .library import TargetLibrary
 from .readers.read_file_info import ReadFileFormat, ReadFileInfo
 from .writer import write_stats, write_unique_counts, write_most_common_reads
@@ -173,7 +173,7 @@ def main(
     try:
         unique_count, stats, query_counts = run_library_independent_counting(
             read_file_info, sample, usable_cpus, reference, min_length=min_length)
-    except InvalidInputFormatError as ex:
+    except (InvalidInputFormatError, MissingMetadataError) as ex:
         abort(ex)
 
     # Write unique counts to file
