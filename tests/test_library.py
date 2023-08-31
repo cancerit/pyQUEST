@@ -73,7 +73,7 @@ def test_library_map():
     lib_indep_stats = LibraryIndependentStats.empty('X')
     lib_indep_stats.total_reads = sum(queries.values())
 
-    app_info = AppInfo('1.0.0', 'pyquest')
+    app_info = AppInfo('1.1.0', 'pyquest')
 
     with NamedTemporaryFile() as temp_file:
 
