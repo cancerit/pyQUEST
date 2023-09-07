@@ -91,6 +91,8 @@ def get_hts_read_info(min_length: int, skip_read_flag: int, read: pysam.AlignedS
 
     # Fetch sequence
     seq: str | None = read.get_forward_sequence()
+    if seq is None:
+        seq = ""
 
     if seq and not is_dna(seq):
         raise InputReadError(f"Invalid sequence: '{seq}'!")
@@ -105,7 +107,7 @@ def get_hts_read_info(min_length: int, skip_read_flag: int, read: pysam.AlignedS
             'S' in read.cigarstring
         ),
         is_short=(len(seq) < min_length),
-        is_empty=(not seq))
+        is_empty=(len(seq) == 0))
 
 
 def parse_htsfile(
