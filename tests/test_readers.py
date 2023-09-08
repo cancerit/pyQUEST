@@ -24,44 +24,49 @@ from pyquest.readers.fq import get_fastq_read_info
 from pyquest.readers.hts import get_hts_read_info
 from pyquest.errors import InputReadError
 
+
 @pytest.mark.parametrize('seq,exp_discard', [
     ('GACGTAGATCTGAT', False),
+    ('at', True),
+    ('GnnTA', True),
     ('', True)
 ])
-def test_get_fq_read_info(seq:str, exp_discard: bool):
+def test_get_fq_read_info(seq: str, exp_discard: bool):
     read_info = get_fastq_read_info(min_length=0, seq=seq, qc_fail=False)
 
-    # Test read parsed and marked for discard correctly
+    # Test fq reads parsed and marked for discard correctly
     assert read_info.to_discard(discard_qc=False) == exp_discard
 
 
 def test_get_fq_read_info_error():
-    seq = "AGG$$$44"
+    seq = "AGGTXAT"
 
-    # Test read parsing throws error correctly
+    # Test fq read parsing throws error correctly
     pytest.raises(InputReadError, get_fastq_read_info, 0, seq, False)
 
-def _make_test_read_from_seq(seq:str) -> pysam.AlignedSegment:
+
+def _read_from_str(seq: str) -> pysam.AlignedSegment:
     read = pysam.AlignedSegment()
     read.query_sequence = seq
     return read
 
+
 @pytest.mark.parametrize('seq,exp_discard', [
     ('GACGTAGATCTGAT', False),
+    ('GnnTA', True),
     ('', True)
 ])
-def test_get_hts_read_info(seq:str, exp_discard: bool):
-    read = _make_test_read_from_seq(seq)
+def test_get_hts_read_info(seq: str, exp_discard: bool):
+    read = _read_from_str(seq)
 
     read_info = get_hts_read_info(min_length=0, skip_read_flag=False, read=read)
 
-    # Test read parsed and marked for discard correctly
+    # Test hts reads parsed and marked for discard correctly
     assert read_info.to_discard(discard_qc=False) == exp_discard
 
 
 def test_get_hts_read_info_error():
-    seq = "AGG$$$44"
-    read = _make_test_read_from_seq(seq)
+    read = _read_from_str("AGGTXAT")
 
-    # Test read parsing throws error correctly
+    # Test hts read parsing throws error correctly
     pytest.raises(InputReadError, get_hts_read_info, 0, False, read)
