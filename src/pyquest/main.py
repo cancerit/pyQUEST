@@ -29,7 +29,7 @@ from click_option_group import OptionGroup
 from . import __version__
 from .app_info import AppInfo
 from .counting import run_library_independent_counting
-from .errors import CustomException, InvalidInputFormatError, InvalidLibraryError, MissingMetadataError, UnsupportedData
+from .errors import CustomException, InvalidInputFormatError, InputReadError, InvalidLibraryError, MissingMetadataError, UnsupportedData
 from .library import TargetLibrary
 from .readers.read_file_info import ReadFileFormat, ReadFileInfo
 from .writer import write_stats, write_unique_counts, write_most_common_reads
@@ -176,17 +176,20 @@ def main(
     except (InvalidInputFormatError, MissingMetadataError) as ex:
         abort(ex)
 
+    if stats.total_zero_reads == stats.input_reads:
+        # Error if all reads are zero-length
+        abort(InputReadError("All reads zero-length!"))
+    elif stats.total_zero_reads > 0:
+        # Else warn user of number of 0-length reads
+        logging.warning(f"{stats.total_zero_reads} zero-length reads were found")
+
     # Write unique counts to file
     logging.info("Writing library-independent counts...")
     write_unique_counts(query_counts, app_info, output, compress=not no_compression)
 
     # Write X most common unique reads to file if specified
     if most_common is not None:
-        write_most_common_reads(most_common, sample, query_counts, output, compress=not no_compression)
-
-    # Warn user with number of 0-length reads
-    if stats.total_zero_reads > 0:
-        logging.warning(f"{stats.total_zero_reads} zero-length reads were found")
+        write_most_common_reads(most_common, query_counts, output, compress=not no_compression)
 
     if library:
 

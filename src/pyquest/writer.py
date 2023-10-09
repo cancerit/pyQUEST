@@ -76,8 +76,8 @@ def write_stats(app_info: AppInfo, stats: LibraryIndependentStats, fp: str) -> N
         json.dump(stats.to_dict(app_info), fh)
 
 
-def write_most_common_reads(n: int, sample: str | None, counts: Counter[str], output_dir: str, compress: bool = False) -> None:
-    fp: str = f"{output_dir}.{sample if sample else 'pyQUEST'}.top{n}.fasta"
+def write_most_common_reads(n: int, counts: Counter[str], output_dir: str, compress: bool = False) -> None:
+    fp: str = f"{output_dir}.top{n}.fasta"
     if compress:
         fp += '.gz'
 
