@@ -74,3 +74,17 @@ def write_stats(app_info: AppInfo, stats: LibraryIndependentStats, fp: str) -> N
     logging.info(f"Writing statistics file: {fp}")
     with open(fp, 'w') as fh:
         json.dump(stats.to_dict(app_info), fh)
+
+
+def write_most_common_reads(n: int, counts: Counter[str], output_dir: str, compress: bool = False) -> None:
+    fp: str = f"{output_dir}.top{n}.fasta"
+    if compress:
+        fp += '.gz'
+
+    logging.info(f"Writing most common reads file: {fp}")
+
+    with open_output(fp, compress=compress) as fh:
+        for i, (read, count) in enumerate(counts.most_common(n)):
+            # if n is greater than the number of reads it will silently write all reads
+            fh.write(f"> pyQUEST|{i+1}|{count}\n")
+            fh.write(f"{read}\n")

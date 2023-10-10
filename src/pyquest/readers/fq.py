@@ -68,7 +68,9 @@ def _parse_fq_header(header: str):
 
 
 def get_fastq_read_info(min_length: int, seq: str, qc_fail: bool) -> ReadInfo:
-    if not is_dna(seq):
+    if seq and not is_dna(seq):
+        # Only raise InputReadError if seq is not empty - if it is,
+        # should continue and count as an empty read
         raise InputReadError(f"Invalid sequence: '{seq}'!")
 
     return ReadInfo(
@@ -77,7 +79,8 @@ def get_fastq_read_info(min_length: int, seq: str, qc_fail: bool) -> ReadInfo:
         is_qc_fail=qc_fail,
         is_ambiguous=is_ambiguous(seq),
         is_masked=is_masked(seq),
-        is_short=(len(seq) < min_length))
+        is_short=(len(seq) < min_length),
+        is_empty=(len(seq) == 0))
 
 
 def parse_fastq(
