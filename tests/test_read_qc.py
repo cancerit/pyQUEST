@@ -56,16 +56,17 @@ def test_is_ambiguous(seq: str, exp: bool):
     assert is_ambiguous(seq) is exp
 
 
-@pytest.mark.parametrize('seq,short,masked,ambiguous', [
-    ('ACGgtTAC', False, True, False),
-    ('ACGgtNNN', False, True, True),
-    ('AC', True, False, False),
-    ('ac', True, True, False),
-    ('an', True, True, True),
-    ('ACNgtTAC', False, True, True),
-    ('ACGgnTAC', False, True, True)
+@pytest.mark.parametrize('seq,short,masked,ambiguous,empty', [
+    ('ACGgtTAC', False, True, False, False),
+    ('ACGgtNNN', False, True, True, False),
+    ('AC', True, False, False, False),
+    ('ac', True, True, False, False),
+    ('an', True, True, True, False),
+    ('ACNgtTAC', False, True, True, False),
+    ('ACGgnTAC', False, True, True, False),
+    ('', True, False, False, True)
 ])
-def test_eval_read_update_stats(seq: str, short: bool, masked: bool, ambiguous: bool):
+def test_eval_read_update_stats(seq: str, short: bool, masked: bool, ambiguous: bool, empty: bool):
     stats = LibraryIndependentStats.empty('A')
     min_length = 3
     qc_fail_discard = False
@@ -76,14 +77,15 @@ def test_eval_read_update_stats(seq: str, short: bool, masked: bool, ambiguous: 
         is_masked=masked,
         is_ambiguous=ambiguous,
         is_short=len(seq) < min_length,
+        is_empty=(len(seq) == 0),
         is_qc_fail=False,
         is_flagged=False)
 
     # Check read info
-    assert read_info.to_discard(qc_fail_discard) == short or masked or ambiguous
+    assert read_info.to_discard(qc_fail_discard) == short or masked or ambiguous or empty
 
     # Update stats
-    assert stats.eval_read_info(qc_fail_discard, read_info) != short or masked or ambiguous
+    assert stats.eval_read_info(qc_fail_discard, read_info) != short or masked or ambiguous or empty
 
     # Check stats
     assert stats.length_excluded_reads == (1 if short else 0)
@@ -91,3 +93,4 @@ def test_eval_read_update_stats(seq: str, short: bool, masked: bool, ambiguous: 
     assert stats.ambiguous_nt_reads == (1 if ambiguous else 0)
     assert stats.total_invalid_reads == (1 if masked or ambiguous else 0)
     assert stats.total_excluded_reads == (1 if masked or ambiguous or short else 0)
+    assert stats.total_zero_reads == (1 if empty else 0)

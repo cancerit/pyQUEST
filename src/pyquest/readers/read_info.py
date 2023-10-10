@@ -27,6 +27,7 @@ class ReadInfo:
     is_ambiguous: bool
     is_qc_fail: bool
     is_short: bool
+    is_empty: bool
     is_flagged: bool
 
     def to_discard(self, discard_qc: bool) -> bool:
@@ -34,6 +35,7 @@ class ReadInfo:
             self.is_masked or
             self.is_ambiguous or
             self.is_short or
+            self.is_empty or
             self.is_flagged or (
                 discard_qc and self.is_qc_fail
             )
