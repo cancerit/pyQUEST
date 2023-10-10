@@ -66,7 +66,7 @@ def test_is_ambiguous(seq: str, exp: bool):
     ('ACGgnTAC', False, True, True, False),
     ('', True, False, False, True)
 ])
-def test_eval_read_update_stats(seq: str, short: bool, masked: bool, ambiguous: bool, empty:bool):
+def test_eval_read_update_stats(seq: str, short: bool, masked: bool, ambiguous: bool, empty: bool):
     stats = LibraryIndependentStats.empty('A')
     min_length = 3
     qc_fail_discard = False

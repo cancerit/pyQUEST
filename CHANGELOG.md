@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.1.0] - 2023-08-31
+## [1.1.0] - 2023-10-10
 
 Handling of zero-length reads and most common reads fasta output.
 

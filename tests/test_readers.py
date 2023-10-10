@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2023 Genome Research Ltd.
 #
-# Author: Luca Barbon
+# Author: Tom Drever
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
