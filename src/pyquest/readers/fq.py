@@ -36,9 +36,16 @@ ILLUMINA_SINGLE_FASTQ_HEADER_PATTERN = re.compile(r"^@([^\s/]+)$")
 ILLUMINA_FASTQ_HEADER_PATTERN = re.compile(r"^@(\S+)/([12])$")
 CASAVA_FASTQ_HEADER_PATTERN = re.compile(r"^@(\S+)\s([012]):([YN])+:[\d+]+:\S+$")
 
+# AVITI header similar to CASAVA but has optional pair member
+# @<name> <pair_member_or_empty>:<qc_flag>:<control>:<index>
+# For example
+# @<name> :<qc_flag>:<control>:<index>
+# @<name> 1:<qc_flag>:<control>:<index>
+AVITI_FASTQ_HEADER_PATTERN = re.compile(r"^@(\S+)\s+(?:([12])?:)([YN]):(\d+):(\S+)$")
 
 OFFSET_ILLUMINA = 64
 OFFSET_CASAVA = 33
+OFFSET_AVITI = 33
 
 
 def _parse_fq_header(header: str):
@@ -54,6 +61,14 @@ def _parse_fq_header(header: str):
         groups = match.groups()
         name = groups[0]
         pair_member = int(groups[1])
+    elif (match := AVITI_FASTQ_HEADER_PATTERN.match(header)) is not None:
+        # AVITI format with optional pair_member
+        phred_offset = OFFSET_AVITI
+        groups = match.groups()
+        name = groups[0]
+        pair_member = int(groups[1]) if groups[1] is not None else None
+        if groups[2] == "Y":
+            qc_fail = True
     elif (match := CASAVA_FASTQ_HEADER_PATTERN.match(header)) is not None:
         # casava1.8+ format
         phred_offset = OFFSET_CASAVA
