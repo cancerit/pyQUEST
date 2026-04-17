@@ -22,7 +22,13 @@ import pysam
 
 from pyquest.readers.fq import get_fastq_read_info
 from pyquest.readers.hts import get_hts_read_info
-from pyquest.errors import InputReadError
+from pyquest.errors import InputReadError, InvalidFASTQError
+from pyquest.readers.fq import (
+    _parse_fq_header,
+    OFFSET_AVITI,
+    OFFSET_ILLUMINA,
+    OFFSET_CASAVA,
+)
 
 
 @pytest.mark.parametrize('seq,exp_discard', [
@@ -70,3 +76,40 @@ def test_get_hts_read_info_error():
 
     # Test hts read parsing throws error correctly
     pytest.raises(InputReadError, get_hts_read_info, 0, False, read)
+
+
+@pytest.mark.parametrize(
+    "header,exp_name,exp_pair,exp_qc,exp_phred",
+    [
+        ('@AVName1 1:N:0:ACGT', 'AVName1', 1, False, OFFSET_AVITI),
+        ('@AVName1  :N:0:ACGT', 'AVName1', 1, False, OFFSET_AVITI),
+        ('@Name1', 'Name1', None, False, OFFSET_ILLUMINA),
+        ('@Name1 1:N:0:ACGT', 'Name1', 1, False, OFFSET_CASAVA),
+    ]
+)
+def test_parse_fq_header_valid_input(
+    header: str,
+    exp_name: str,
+    exp_pair: int | None,
+    exp_qc: bool,
+    exp_phred: int,
+):
+
+    name, pair_member, qc_fail, phred_offset = _parse_fq_header(header)
+
+    assert name == exp_name
+    assert pair_member == exp_pair
+    assert qc_fail == exp_qc
+    assert phred_offset == exp_phred
+
+
+@pytest.mark.parametrize(
+    "header,expected_error",
+    [
+        ('@AVName1 3:N:0:ACGT', InvalidFASTQError),
+        ('@Name1 :N:0:ACGT', InvalidFASTQError),
+    ]
+)
+def test_parse_fq_header_error(header: str, expected_error: type[Exception]):
+    with pytest.raises(expected_error):
+        _parse_fq_header(header)
