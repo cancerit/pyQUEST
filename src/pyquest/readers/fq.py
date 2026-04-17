@@ -36,13 +36,19 @@ ILLUMINA_SINGLE_FASTQ_HEADER_PATTERN = re.compile(r"^@([^\s/]+)$")
 ILLUMINA_FASTQ_HEADER_PATTERN = re.compile(r"^@(\S+)/([12])$")
 CASAVA_FASTQ_HEADER_PATTERN = re.compile(r"^@(\S+)\s([012]):([YN])+:[\d+]+:\S+$")
 
-# AVITI header similar to CASAVA but has optional pair member
-# @<name> <pair_member_or_empty>:<qc_flag>:<control>:<index>
+# AVITI header from Base2Fastq processing:
+# https://docs.elembio.io/docs/bases2fastq/outputs/#fastq-files
+# @<instrument>:<run name>:<flow cell ID>:<lane>:<tile>:<x-pos>:<y-pos>:UMI <read>:N:0:<index sequence>
+# where <read> is 1 or 2
+#
+# AVITI header is based on CASAVA pattern except for:
+# 1) Allows for read to missing. Observed in FASTQ header after Base2Fastq processing
+#    in some versions of Base2Fasta
+# 2) Assumes that the instrument starts with AV
 # For example
-# @<name> :<qc_flag>:<control>:<index>
-# @<name> 1:<qc_flag>:<control>:<index>
-AVITI_FASTQ_HEADER_PATTERN = re.compile(r"^@(\S+)\s+(?:([12])?:)([YN]):(\d+):(\S+)$")
-
+# @AV<name>  :N:0:<index sequence>
+# @AV<name> 1:N:0:<index sequence>
+AVITI_FASTQ_HEADER_PATTERN = re.compile(r"^@(AV\S+)\s+([12])?:([YN]):(\d+):(\S+)$")
 OFFSET_ILLUMINA = 64
 OFFSET_CASAVA = 33
 OFFSET_AVITI = 33
@@ -62,11 +68,11 @@ def _parse_fq_header(header: str):
         name = groups[0]
         pair_member = int(groups[1])
     elif (match := AVITI_FASTQ_HEADER_PATTERN.match(header)) is not None:
-        # AVITI format with optional pair_member
+        # AVITI format with missing read in header set to 1
         phred_offset = OFFSET_AVITI
         groups = match.groups()
         name = groups[0]
-        pair_member = int(groups[1]) if groups[1] is not None else None
+        pair_member = int(groups[1]) if groups[1] is not None else 1
         if groups[2] == "Y":
             qc_fail = True
     elif (match := CASAVA_FASTQ_HEADER_PATTERN.match(header)) is not None:
