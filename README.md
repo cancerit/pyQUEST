@@ -8,7 +8,7 @@ Input files:
 - [library file](#library) (library-dependent mode only)
 
 >[!CAUTION]
-> Aviti Element FASTQ files produced by `bases2fastq==2.2.0` have a malformed header and as such cannot be parsed by pyQUEST.
+> Aviti Element FASTQ files produced by `bases2fastq` versions 2.2.0 through 2.2.1 have a malformed header and as such cannot be parsed by pyQUEST. This was a bug and has been fixed in subsequent versions.
 
 Output files:
 
