@@ -7,6 +7,9 @@ Input files:
 - SAM/BAM/CRAM/FASTQ file
 - [library file](#library) (library-dependent mode only)
 
+>[!CAUTION]
+> Aviti Element FASTQ files produced by `bases2fastq==2.2.0` have a malformed header and as such cannot be parsed by pyQUEST.
+
 Output files:
 
 - **library-independent count**:
